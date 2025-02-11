@@ -47,6 +47,10 @@ public class CustomMemberDetails implements UserDetails {
         return member.getUsername();
     }
 
+    public String getRole(){
+        return member.getRole();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
 

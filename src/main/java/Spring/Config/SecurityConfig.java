@@ -64,6 +64,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/join").permitAll()    // 권한 허용
                         .requestMatchers("/admin").hasRole("ADMIN") // admin만 접근 가능
+//                                .requestMatchers("/profile").authenticated());
                         .anyRequest().authenticated()); // 로그인하고 접근
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
