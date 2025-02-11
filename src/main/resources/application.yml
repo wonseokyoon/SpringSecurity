@@ -11,7 +11,7 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       show-sql: true            # SQL ?? ?? ??
@@ -19,3 +19,5 @@ spring:
       properties:
         hibernate.format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+  jwt:
+    secret: rWOxKliyDI0WGRrAwRKoC0Rp+v9I/9CtcckOjvU+GFc=

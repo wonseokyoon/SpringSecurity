@@ -32,6 +32,7 @@ public class JoinService {
         Member member=new Member();
         member.setUsername(username);
         member.setPassword(bCryptPasswordEncoder.encode(password));
+        // 역할 부여
         member.setRole("ROLE_ADMIN");
 
         memberRepository.save(member);
