@@ -8,5 +8,5 @@ import lombok.Data;
 public class ProfileResponse {
     private String username;
     private String role;
-    private String authority;   // 권한
+    //private String authority;   // 권한
 }
