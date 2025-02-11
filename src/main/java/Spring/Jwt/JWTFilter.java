@@ -3,6 +3,8 @@ package Spring.Jwt;
 import Spring.Domain.Member;
 import Spring.Domain.Role;
 import Spring.Dto.CustomMemberDetails;
+import Spring.Exception.BaseException;
+import Spring.Exception.ErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,12 +49,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //토큰 소멸 시간 검증
         if (jwtUtil.isExpired(token)) {
-
-//            System.out.println("token expired");
             filterChain.doFilter(request, response);
-
-            //조건이 해당되면 메소드 종료 (필수)
-            return;
         }
 
         //토큰에서 username과 role 획득

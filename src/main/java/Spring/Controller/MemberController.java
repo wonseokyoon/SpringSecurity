@@ -44,35 +44,24 @@ public class MemberController {
         if(memberService.existByUsername(dto.getUsername())){
             throw new BaseException(ErrorCode.DUPLICATE_USERNAME);
         }
-        Member member = memberService.joinAdmin(dto);
+        Member member = memberService.join(dto);
         ProfileResponse response=new ProfileResponse(member.getUsername(),member.getRole().name());
         return ResponseEntity.ok(response);
     }
 
     // 프로필
     @GetMapping("/profile")
-    public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal CustomMemberDetails memberDetails) {
-        if(memberDetails==null){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        String username = memberDetails.getUsername();
-        String role=memberDetails.getRole();    // 역할
-//        String authorities=memberDetails.getAuthorities().iterator().next().getAuthority(); // 권한
-
-//        ProfileResponse profileResponse = new ProfileResponse(username,role,authorities);
-        ProfileResponse profileResponse = new ProfileResponse(username,role);
-        return ResponseEntity.ok(profileResponse);
+    public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal CustomMemberDetails memberDetails) throws BaseException {
+        ProfileResponse response=memberService.getProfile(memberDetails);
+        return ResponseEntity.ok(response);
     }
 
     // 관리자 페이지
     @GetMapping("/admin")
     public ResponseEntity<ProfileResponse> adminPage(@AuthenticationPrincipal CustomMemberDetails memberDetails) {
-        String username = memberDetails.getUsername();
-        String role=memberDetails.getRole();
+        ProfileResponse response=memberService.getProfile(memberDetails);
 //        String authorities=memberDetails.getAuthorities().iterator().next().getAuthority();
-
-        ProfileResponse profileResponse = new ProfileResponse(username,role);
-        return ResponseEntity.ok(profileResponse);
+        return ResponseEntity.ok(response);
     }
 
 

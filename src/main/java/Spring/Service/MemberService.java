@@ -3,7 +3,9 @@ package Spring.Service;
 
 import Spring.Domain.Member;
 import Spring.Domain.Role;
+import Spring.Dto.CustomMemberDetails;
 import Spring.Dto.JoinDTO;
+import Spring.Dto.ProfileResponse;
 import Spring.Exception.BaseException;
 import Spring.Exception.ErrorCode;
 import Spring.Repository.MemberRepository;
@@ -78,5 +80,12 @@ public class MemberService {
 
     public boolean existByUsername(String username) {
         return memberRepository.existsByUsername(username);
+    }
+
+    public ProfileResponse getProfile(CustomMemberDetails memberDetails) {
+        String username=memberDetails.getUsername();
+        String role=memberDetails.getRole();
+
+        return new ProfileResponse(username,role);
     }
 }
