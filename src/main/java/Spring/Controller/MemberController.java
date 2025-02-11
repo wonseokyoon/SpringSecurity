@@ -44,7 +44,7 @@ public class MemberController {
         if(memberService.existByUsername(dto.getUsername())){
             throw new BaseException(ErrorCode.DUPLICATE_USERNAME);
         }
-        Member member = memberService.join(dto);
+        Member member = memberService.joinAdmin(dto);
         ProfileResponse response=new ProfileResponse(member.getUsername(),member.getRole().name());
         return ResponseEntity.ok(response);
     }

@@ -46,10 +46,6 @@ public class MemberService {
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
 
-        if(memberRepository.existsByUsername(username)) {
-            throw new IllegalStateException("이미 사용중인 id 입니다.");
-        }
-
         Member member = new Member();
         member.setUsername(username);
         member.setPassword(bCryptPasswordEncoder.encode(password));
@@ -60,25 +56,17 @@ public class MemberService {
     }
 
     // 관리자 회원가입
-    public void joinAdmin(JoinDTO joinDTO) {
+    public Member joinAdmin(JoinDTO joinDTO) {
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
 
-        if(memberRepository.existsByUsername(username)) {
-            throw new IllegalStateException("이미 사용중인 id입니다.");
-        }
+        Member member = new Member();
+        member.setUsername(username);
+        member.setPassword(bCryptPasswordEncoder.encode(password));
+        member.setRole(Role.ROLE_ADMIN);
+        memberRepository.save(member);
 
-        try {
-            Member member = new Member();
-            member.setUsername(username);
-            member.setPassword(bCryptPasswordEncoder.encode(password));
-            member.setRole(Role.ROLE_ADMIN);
-            memberRepository.save(member);
-
-        } catch (Exception e) {
-            System.out.println("관리자 계정 생성 실패: "+e.getMessage());
-            e.printStackTrace();
-        }
+        return member;
     }
 
     public Member findByUsername(String username) throws BaseException {
