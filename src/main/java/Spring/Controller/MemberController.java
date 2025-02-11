@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping()
 public class MemberController {
 
-    @GetMapping
+    @GetMapping("/profile")
     public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal CustomMemberDetails memberDetails) {
         if(memberDetails==null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -25,5 +25,20 @@ public class MemberController {
         ProfileResponse profileResponse = new ProfileResponse(username,role,authorities);
         return ResponseEntity.ok(profileResponse);
     }
+
+    // 관리자 페이지
+    @GetMapping("/admin")
+    public ResponseEntity<ProfileResponse> adminPage(@AuthenticationPrincipal CustomMemberDetails memberDetails) {
+        String username = memberDetails.getUsername();
+        String role=memberDetails.getRole();
+        String authorities=memberDetails.getAuthorities().iterator().next().getAuthority();
+
+        ProfileResponse profileResponse = new ProfileResponse(username,role,authorities);
+        return ResponseEntity.ok(profileResponse);
+    }
+
+
+
+
 
 }

@@ -57,6 +57,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 유저 확인
         CustomMemberDetails memberDetails= (CustomMemberDetails) authentication.getPrincipal();
         String username= memberDetails.getUsername();
+        String StringRole = memberDetails.getRole();
         String role=authentication.getAuthorities().iterator().next().getAuthority();
 
 //        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

@@ -1,6 +1,7 @@
 package Spring.Jwt;
 
 import Spring.Domain.Member;
+import Spring.Domain.Role;
 import Spring.Dto.CustomMemberDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -40,14 +41,14 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        System.out.println("authorization now");
+//        System.out.println("authorization now");
         //Bearer 부분 제거 후 순수 토큰만 획득
         String token = authorization.split(" ")[1];
 
         //토큰 소멸 시간 검증
         if (jwtUtil.isExpired(token)) {
 
-            System.out.println("token expired");
+//            System.out.println("token expired");
             filterChain.doFilter(request, response);
 
             //조건이 해당되면 메소드 종료 (필수)
@@ -56,7 +57,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //토큰에서 username과 role 획득
         String username = jwtUtil.getUsername(token);
-        String role = jwtUtil.getRole(token);
+        String roleString = jwtUtil.getRole(token);
+        Role role=Role.valueOf(roleString);
 
         //userEntity를 생성하여 값 set
         Member member = new Member();
@@ -69,6 +71,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authToken = new UsernamePasswordAuthenticationToken(customMemberDetails, null, customMemberDetails.getAuthorities());
+
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
