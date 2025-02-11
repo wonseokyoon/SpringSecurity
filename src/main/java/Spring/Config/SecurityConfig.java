@@ -26,9 +26,11 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JWTUtil jwtUtil) {
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JWTUtil jwtUtil,CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil=jwtUtil;
+        this.customAccessDeniedHandler=new CustomAccessDeniedHandler();
     }
 
     @Bean
@@ -71,10 +73,16 @@ public class SecurityConfig {
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
+
         //세션 설정
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // 접근 거부 처리
+        http
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(customAccessDeniedHandler));
         return http.build();
     }
 
