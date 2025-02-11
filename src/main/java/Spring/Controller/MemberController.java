@@ -28,21 +28,25 @@ public class MemberController {
 //    }
     // 회원 가입
     @PostMapping("/join")
-    public ResponseEntity<?> signUp(@Valid @RequestBody JoinDTO joinDTO) throws BaseException {
+    public ResponseEntity<ProfileResponse> signUp(@Valid @RequestBody JoinDTO dto) throws BaseException {
         // 중복 검사
-        if(memberService.existByUsername(joinDTO.getUsername())){
+        if(memberService.existByUsername(dto.getUsername())){
             throw new BaseException(ErrorCode.DUPLICATE_USERNAME);
         }
-        Member member = memberService.join(joinDTO);
+        Member member = memberService.join(dto);
         ProfileResponse response=new ProfileResponse(member.getUsername(),member.getRole().name());
         return ResponseEntity.ok(response);
     }
 
     // 관리자 생성
     @PostMapping("/joinAdmin")
-    public String joinAdmin(@Valid @RequestBody JoinDTO dto) {
-        memberService.joinAdmin(dto);
-        return "success";
+    public ResponseEntity<ProfileResponse> joinAdmin(@Valid @RequestBody JoinDTO dto) throws BaseException {
+        if(memberService.existByUsername(dto.getUsername())){
+            throw new BaseException(ErrorCode.DUPLICATE_USERNAME);
+        }
+        Member member = memberService.join(dto);
+        ProfileResponse response=new ProfileResponse(member.getUsername(),member.getRole().name());
+        return ResponseEntity.ok(response);
     }
 
     // 프로필
