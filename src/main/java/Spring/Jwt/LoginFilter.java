@@ -46,7 +46,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             //token에 담은 검증을 위한 AuthenticationManager로 전달
             return authenticationManager.authenticate(authToken);
         } catch (IOException e) {
-            throw new RuntimeException("Authentication failed", e);
+            throw new RuntimeException("로그인 처리 중 오류 발생", e);
         }
 
     }
@@ -91,6 +91,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        try{
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().write("{\"error\": \"다시 로그인하세요.\"}");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+
     }
 
 

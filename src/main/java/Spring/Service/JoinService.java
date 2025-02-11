@@ -45,7 +45,7 @@ public class JoinService {
         String password = joinDTO.getPassword();
 
         if(memberRepository.existsByUsername(username)) {
-            throw new IllegalStateException("username is already in use");
+            throw new IllegalStateException("이미 사용중인 id 입니다.");
         }
 
         Member member = new Member();
@@ -62,7 +62,7 @@ public class JoinService {
         String password = joinDTO.getPassword();
 
         if(memberRepository.existsByUsername(username)) {
-            throw new IllegalStateException("username is already in use");
+            throw new IllegalStateException("이미 사용중인 id입니다.");
         }
 
         try {
@@ -77,7 +77,5 @@ public class JoinService {
             e.printStackTrace();
         }
     }
-
-
 
 }
