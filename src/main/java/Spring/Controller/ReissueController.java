@@ -14,17 +14,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class ReissueController {
-    // refresh 토큰으로 access 토큰 재발급
 
     private final JWTUtil jwtUtil;
 
+    // refresh 토큰으로 access 토큰 재발급
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request) throws BaseException {
+    public ResponseEntity<?> reissue(HttpServletRequest request,HttpServletResponse response) throws BaseException {
 
         //refresh 토큰
         String refresh = null;
@@ -61,14 +62,25 @@ public class ReissueController {
 
         //make new JWT
         String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
+        String newRefresh = jwtUtil.createJwt("refresh", username, role, 8640000L);
 
         //response
-        Map<String,String> response=new HashMap<>();
-        response.put("new_accessToken",newAccess);
-//        response.setHeader("access", newAccess);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        Map<String,String> responseBody=new LinkedHashMap<>();
+        response.addCookie(createCookie("refresh",newRefresh));
+        responseBody.put("new_Access",newAccess);
+        responseBody.put("new_Refresh",newRefresh);
+
+        // 쿠키에 refresh 토큰 추가
+
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
+    private Cookie createCookie(String key, String value) {
 
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60);
+        cookie.setHttpOnly(true);
 
+        return cookie;
+    }
 }
