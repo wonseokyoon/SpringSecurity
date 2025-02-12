@@ -3,6 +3,7 @@ package Spring.Config;
 import Spring.Jwt.JWTFilter;
 import Spring.Jwt.JWTUtil;
 import Spring.Jwt.LoginFilter;
+import Spring.Repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,9 +29,11 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JWTUtil jwtUtil,CustomAccessDeniedHandler customAccessDeniedHandler) {
+    private final RefreshRepository refreshRepository;
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomAccessDeniedHandler customAccessDeniedHandler, RefreshRepository refreshRepository) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil=jwtUtil;
+        this.refreshRepository = refreshRepository;
         this.customAccessDeniedHandler=new CustomAccessDeniedHandler();
     }
 
@@ -71,7 +75,7 @@ public class SecurityConfig {
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
 
         //세션 설정
