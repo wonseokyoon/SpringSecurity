@@ -3,9 +3,11 @@ package Spring.Jwt;
 import Spring.Dto.CustomMemberDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -54,40 +56,46 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
+
+//        CustomMemberDetails memberDetails= (CustomMemberDetails) authentication.getPrincipal();
+//        String username= memberDetails.getUsername();
+//        String StringRole = memberDetails.getRole();
+//        String role=authentication.getAuthorities().iterator().next().getAuthority();
         // 유저 확인
-        CustomMemberDetails memberDetails= (CustomMemberDetails) authentication.getPrincipal();
-        String username= memberDetails.getUsername();
-        String StringRole = memberDetails.getRole();
-        String role=authentication.getAuthorities().iterator().next().getAuthority();
+        String username = authentication.getName();
 
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//        GrantedAuthority auth = iterator.next();
-//
-//        String role=auth.getAuthority();
-
-
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+        GrantedAuthority auth = iterator.next();
+        String role=auth.getAuthority();
 
         // 토큰 생성
 //        String token= jwtUtil.createJwt(username,role,60*60*10L);
         // 액세스 토큰 생성
-        String accessToken = jwtUtil.createJwt(username, role, 60 * 60 * 1000L); // 1시간 지속
+        String access = jwtUtil.createJwt("access",username, role, 60 * 60 * 1000L); // 1시간 지속
         // 리프레시 토큰 생성
-        String refreshToken = jwtUtil.createJwt(username, role, 60 * 60 * 24 * 1000L); // 24시간 지속
+        String refresh = jwtUtil.createJwt("refresh",username, role, 60 * 60 * 24 * 86400000L); // 24시간 지속
+
+        // 응답 설정
+        response.setHeader("access",access);
+        response.addCookie(createCookie("refresh", refresh));
+        response.setStatus(HttpStatus.OK.value());
+
 
         // JSON 형식으로 응답
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-
-
-//        response.addHeader("Authorization","Bearer "+token);
-        // JSON 형식으로 응답
-        response.setContentType("application/json");
-        new ObjectMapper().writeValue(response.getWriter(), tokens);
+//        Map<String, String> tokens = new HashMap<>();
+//        tokens.put("accessToken", access);
+//        tokens.put("refreshToken", refresh);
+//
+//
+////        response.addHeader("Authorization","Bearer "+token);
+//        // JSON 형식으로 응답
+//        response.setContentType("application/json");
+//        new ObjectMapper().writeValue(response.getWriter(), tokens);
     }
 
     //로그인 실패시 실행하는 메소드
+
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -102,6 +110,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     }
 
+    // 쿠키 생성
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60);
+        //cookie.setSecure(true);
+        //cookie.setPath("/");
+        cookie.setHttpOnly(true);
 
-
+        return cookie;
+    }
 }

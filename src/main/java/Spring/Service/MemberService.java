@@ -22,27 +22,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-//    @Transactional
-//    public void join(JoinDTO joinDTO) {
-//        String username = joinDTO.getUsername();
-//        String password = joinDTO.getPassword();
-//
-//        // 중복 확인
-//        Boolean isExist=memberRepository.existsByUsername(username);
-//        if(isExist){
-//            return;
-//        }
-//
-//        // 생성
-//        Member member=new Member();
-//        member.setUsername(username);
-//        member.setPassword(bCryptPasswordEncoder.encode(password));
-//        // 역할 부여
-//        member.setRole("ROLE_ADMIN");
-//
-//        memberRepository.save(member);
-//    }
-
     // 일반 회원가입
     public Member join(JoinDTO joinDTO) {
         String username = joinDTO.getUsername();
@@ -69,13 +48,6 @@ public class MemberService {
         memberRepository.save(member);
 
         return member;
-    }
-
-    public Member findByUsername(String username) throws BaseException {
-        if(memberRepository.findByUsername(username) == null) {
-            throw new BaseException(ErrorCode.USER_NOT_FOUND);
-        }
-        return memberRepository.findByUsername(username);
     }
 
     public boolean existByUsername(String username) {

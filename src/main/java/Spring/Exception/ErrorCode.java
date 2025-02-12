@@ -10,11 +10,10 @@ public enum ErrorCode {
     DUPLICATE_USERNAME("이미 사용중인 이름입니다."),
     COMMENT_NOT_FOUND("댓글이 없습니다"),
 
-    TOKEN_IS_EXPIRED("토큰이 만료됐습니다.")
+    TOKEN_IS_EXPIRED("토큰이 만료됐습니다."),
 
 
-
-
+    REFRESH_TOKEN_NULL("refresh 토큰이 없습니다.")
     ;
 
     private final String message;
