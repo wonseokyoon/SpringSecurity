@@ -61,37 +61,31 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //        String username= memberDetails.getUsername();
 //        String StringRole = memberDetails.getRole();
 //        String role=authentication.getAuthorities().iterator().next().getAuthority();
+
         // 유저 확인
         String username = authentication.getName();
-
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role=auth.getAuthority();
 
-        // 토큰 생성
-//        String token= jwtUtil.createJwt(username,role,60*60*10L);
         // 액세스 토큰 생성
         String access = jwtUtil.createJwt("access",username, role, 60 * 60 * 1000L); // 1시간 지속
         // 리프레시 토큰 생성
         String refresh = jwtUtil.createJwt("refresh",username, role, 60 * 60 * 24 * 86400000L); // 24시간 지속
 
-        // 응답 설정
-        response.setHeader("access",access);
-        response.addCookie(createCookie("refresh", refresh));
-        response.setStatus(HttpStatus.OK.value());
-
 
         // JSON 형식으로 응답
-//        Map<String, String> tokens = new HashMap<>();
-//        tokens.put("accessToken", access);
-//        tokens.put("refreshToken", refresh);
-//
-//
-////        response.addHeader("Authorization","Bearer "+token);
-//        // JSON 형식으로 응답
-//        response.setContentType("application/json");
-//        new ObjectMapper().writeValue(response.getWriter(), tokens);
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access", access);
+        tokens.put("refresh", refresh);
+
+        // 응답 설정
+        response.addCookie(createCookie("refresh", refresh));
+        response.setContentType("application/json; charset=utf-8");
+        response.setStatus(HttpStatus.OK.value());
+
+        new ObjectMapper().writeValue(response.getWriter(), tokens);
     }
 
     //로그인 실패시 실행하는 메소드
@@ -113,11 +107,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     // 쿠키 생성
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setMaxAge(24*60*60); // 1일
         cookie.setHttpOnly(true);
-
         return cookie;
     }
 }
