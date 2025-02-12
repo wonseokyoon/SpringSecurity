@@ -100,8 +100,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             e.printStackTrace();
         }
 
-
-
     }
 
     // 쿠키 생성
