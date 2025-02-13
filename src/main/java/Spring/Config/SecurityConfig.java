@@ -75,7 +75,7 @@ public class SecurityConfig {
 //                                .requestMatchers("/profile").authenticated());
                         .anyRequest().authenticated()); // 로그인하고 접근
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil,refreshRepository), LoginFilter.class);
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
         http
