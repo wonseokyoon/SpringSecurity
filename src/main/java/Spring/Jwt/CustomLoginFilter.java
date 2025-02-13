@@ -77,6 +77,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         tokens.put("access", access);
         tokens.put("refresh", refresh);
 
+
         // 응답 설정
         response.setContentType("application/json; charset=utf-8");
         // 쿠키 주입
