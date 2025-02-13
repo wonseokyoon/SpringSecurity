@@ -1,13 +1,9 @@
-package Spring.Service;
+package Spring.Service.Login;
 
 
-import Spring.Domain.Member;
-import Spring.Domain.Role;
-import Spring.Dto.CustomMemberDetails;
-import Spring.Dto.JoinDTO;
-import Spring.Dto.ProfileResponse;
-import Spring.Exception.BaseException;
-import Spring.Exception.ErrorCode;
+import Spring.Domain.Member.Member;
+import Spring.Domain.Member.Role;
+import Spring.Dto.Login.JoinDTO;
 import Spring.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberService {
+public class LoginService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -54,10 +50,4 @@ public class MemberService {
         return memberRepository.existsByUsername(username);
     }
 
-    public ProfileResponse getProfile(CustomMemberDetails memberDetails) {
-        String username=memberDetails.getUsername();
-        String role=memberDetails.getRole();
-
-        return new ProfileResponse(username,role);
-    }
 }

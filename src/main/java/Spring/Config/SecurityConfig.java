@@ -3,7 +3,7 @@ package Spring.Config;
 import Spring.Jwt.CustomLogoutFilter;
 import Spring.Jwt.JWTFilter;
 import Spring.Jwt.JWTUtil;
-import Spring.Jwt.LoginFilter;
+import Spring.Jwt.CustomLoginFilter;
 import Spring.Repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -75,9 +74,9 @@ public class SecurityConfig {
 //                                .requestMatchers("/profile").authenticated());
                         .anyRequest().authenticated()); // 로그인하고 접근
         http
-                .addFilterBefore(new JWTFilter(jwtUtil,refreshRepository), LoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil,refreshRepository), CustomLoginFilter.class);
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
         http
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 

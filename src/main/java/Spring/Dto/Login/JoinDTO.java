@@ -1,4 +1,4 @@
-package Spring.Dto;
+package Spring.Dto.Login;
 
 import lombok.Builder;
 import lombok.Data;

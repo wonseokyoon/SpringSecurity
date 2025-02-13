@@ -1,6 +1,6 @@
-package Spring.Controller;
+package Spring.Controller.Login;
 
-import Spring.Domain.RefreshEntity;
+import Spring.Domain.Token.RefreshEntity;
 import Spring.Exception.BaseException;
 import Spring.Exception.ErrorCode;
 import Spring.Jwt.JWTUtil;

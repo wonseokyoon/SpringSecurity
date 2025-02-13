@@ -1,6 +1,6 @@
 package Spring.Jwt;
 
-import Spring.Domain.RefreshEntity;
+import Spring.Domain.Token.RefreshEntity;
 import Spring.Repository.RefreshRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.*;
 
 @RequiredArgsConstructor
-public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
@@ -65,7 +65,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role=auth.getAuthority();
 
         // 액세스 토큰 생성
-        String access = jwtUtil.createJwt("access",username, role, 1 * 60 * 1000L / 6); // 10분
+        String access = jwtUtil.createJwt("access",username, role, 10 * 60 * 1000L); // 10분
         // 리프레시 토큰 생성
         String refresh = jwtUtil.createJwt("refresh",username, role, 7 * 24 * 60 * 60 * 1000L); // 1주일 지속
 

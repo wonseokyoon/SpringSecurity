@@ -1,4 +1,4 @@
-package Spring.Controller;
+package Spring.Controller.Login;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,10 +1,9 @@
-package Spring.Service;
+package Spring.Service.Login;
 
 
-import Spring.Dto.CustomMemberDetails;
-import Spring.Domain.Member;
+import Spring.Dto.Login.CustomMemberDetails;
+import Spring.Domain.Member.Member;
 import Spring.Repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

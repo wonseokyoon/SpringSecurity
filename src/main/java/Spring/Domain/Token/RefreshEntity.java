@@ -1,4 +1,4 @@
-package Spring.Domain;
+package Spring.Domain.Token;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

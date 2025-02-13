@@ -1,13 +1,11 @@
-package Spring.Dto;
+package Spring.Dto.Login;
 
-import Spring.Domain.Member;
-import lombok.Data;
+import Spring.Domain.Member.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 
 public class CustomMemberDetails implements UserDetails {

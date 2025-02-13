@@ -1,7 +1,6 @@
-package Spring.Domain;
+package Spring.Domain.Member;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

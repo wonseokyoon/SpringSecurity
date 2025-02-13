@@ -1,8 +1,8 @@
 package Spring.Jwt;
 
-import Spring.Domain.Member;
-import Spring.Domain.Role;
-import Spring.Dto.CustomMemberDetails;
+import Spring.Domain.Member.Member;
+import Spring.Domain.Member.Role;
+import Spring.Dto.Login.CustomMemberDetails;
 import Spring.Repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 

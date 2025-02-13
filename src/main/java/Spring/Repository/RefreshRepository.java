@@ -1,6 +1,6 @@
 package Spring.Repository;
 
-import Spring.Domain.RefreshEntity;
+import Spring.Domain.Token.RefreshEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
