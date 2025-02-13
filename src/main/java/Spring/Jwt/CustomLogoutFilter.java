@@ -13,20 +13,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     public CustomLogoutFilter(JWTUtil jwtUtil, RefreshRepository refreshRepository) {
-
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
 
@@ -47,19 +46,26 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         // refresh 토큰 get
+        String authorization = request.getHeader("Authorization");
         String refresh = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
+//        Cookie[] cookies = request.getCookies();
+//        for (Cookie cookie : cookies) {
+//
+//            if (cookie.getName().equals("refresh")) {
+//
+//                refresh = cookie.getValue();
+//            }
+//        }
 
-            if (cookie.getName().equals("refresh")) {
-
-                refresh = cookie.getValue();
-            }
+        if(authorization != null && authorization.startsWith("Bearer ")) {
+            refresh = authorization.substring(7);
         }
 
-        //refresh 토큰 없으면
+        //refresh 토큰을 얻지 못한경우(null)
         if (refresh == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            PrintWriter writer = response.getWriter();
+            writer.print("Refresh token is Null");
             return;
         }
 
@@ -68,6 +74,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            PrintWriter writer = response.getWriter();
+            writer.print("Refresh token is Expired");
             return;
         }
 
@@ -75,6 +83,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            PrintWriter writer = response.getWriter();
+            writer.print("Refresh token is Needed");
             return;
         }
 
