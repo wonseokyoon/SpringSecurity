@@ -30,14 +30,24 @@ public class ReissueController {
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) throws BaseException {
 
-        // Bearer 헤더에서 리프레시 토큰 추출
-        String refreshToken = request.getHeader("Authorization");
-
-        if (refreshToken == null || !refreshToken.startsWith("Bearer ")) {
-            throw new BaseException(ErrorCode.REFRESH_TOKEN_NULL); // 예외 처리
+        // 쿠키 사용하여 리프레시 토큰 추출
+        String refreshToken=null;
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("refresh")){
+                    refreshToken = cookie.getValue();
+                }
+            }
         }
 
-        refreshToken = refreshToken.substring(7); // Bearer 제거
+//        // Bearer 헤더에서 리프레시 토큰 추출
+//        String refreshToken = request.getHeader("Authorization");
+//        if (refreshToken == null || !refreshToken.startsWith("Bearer ")) {
+//            throw new BaseException(ErrorCode.REFRESH_TOKEN_NULL); // 예외 처리
+//        }
+
+//        refreshToken = refreshToken.substring(7); // Bearer 제거
 
         // 만료 체크
         try {
@@ -72,12 +82,22 @@ public class ReissueController {
         Map<String, String> responseBody = new LinkedHashMap<>();
         responseBody.put("new_Access", newAccess);
         responseBody.put("new_Refresh", newRefresh);
+        // 쿠키에 리프레시 저장
+        response.addCookie(createCookie("refresh", newRefresh));
 
         // 기존 refresh 삭제 후 새 refresh 생성 후 엔티티에 저장
         refreshRepository.deleteByRefresh(refreshToken);
         addRefreshEntity(username, newRefresh, 86400000L);
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
+    // 쿠키 생성
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60);
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {

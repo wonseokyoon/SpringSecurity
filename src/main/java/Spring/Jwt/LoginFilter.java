@@ -78,8 +78,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         tokens.put("refresh", refresh);
 
         // 응답 설정
-        response.addCookie(createCookie("refresh", refresh));
         response.setContentType("application/json; charset=utf-8");
+        // 쿠키 주입
+        response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
 
         new ObjectMapper().writeValue(response.getWriter(), tokens);

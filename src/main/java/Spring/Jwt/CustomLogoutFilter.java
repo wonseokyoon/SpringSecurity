@@ -45,21 +45,24 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        // refresh 토큰 get
-        String authorization = request.getHeader("Authorization");
+//         refresh 토큰 get
+//        String authorization = request.getHeader("Authorization");
         String refresh = null;
-//        Cookie[] cookies = request.getCookies();
-//        for (Cookie cookie : cookies) {
-//
-//            if (cookie.getName().equals("refresh")) {
-//
-//                refresh = cookie.getValue();
-//            }
-//        }
 
-        if(authorization != null && authorization.startsWith("Bearer ")) {
-            refresh = authorization.substring(7);
+        // get 쿠키
+        Cookie[] cookies = request.getCookies();
+        if(cookies !=null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh")) {
+                    refresh = cookie.getValue();
+                }
+            }
         }
+
+
+//        if(authorization != null && authorization.startsWith("Bearer ")) {
+//            refresh = authorization.substring(7);
+//        }
 
         //refresh 토큰을 얻지 못한경우(null)
         if (refresh == null) {
