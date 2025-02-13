@@ -47,55 +47,53 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
         String token = authorization.substring(7);
-        String category=jwtUtil.getCategory(token);
 
-        if (category.equals("refresh")) {
-            // 리프레시 토큰으로 접근 완료, 재발급 처리 등의 준비
-            if (request.getRequestURI().equals("/reissue")) {
-                // /reissue 요청을 처리
-                filterChain.doFilter(request, response);
-                return; // 리프레시 토큰으로 접근할 경우 필터 진행
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                PrintWriter writer = response.getWriter();
-                writer.print("refresh token cannot be used for access");
-                return; // 접근 거부
-            }
-        }else if (category.equals("access")) {
-            // 토큰 만료 검증
-            try {
+        try {
+            String category=jwtUtil.getCategory(token);
+            if (category.equals("access")) {
+                // 액세스 토큰 만료 검증
                 jwtUtil.isExpired(token);
-            } catch (ExpiredJwtException e) {
-
-                //response body
-                PrintWriter writer = response.getWriter();
-                writer.print("access token expired");
-
-                //response status code
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+            } else if (category.equals("refresh")) {
+                if (request.getRequestURI().equals("/reissue")) {
+                    // /reissue 요청을 처리
+                    filterChain.doFilter(request, response);
+                    return; // 리프레시 토큰으로 접근할 경우 필터 진행
+                }else{
+                    // 리프레시 토큰 사용 시 인증 접근 차단
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    PrintWriter writer = response.getWriter();
+                    writer.print("refresh token cannot be used for access");
+                    return; // 접근을 거부
+                }
             }
-
-            //토큰에서 username과 role 획득
-            String username = jwtUtil.getUsername(token);
-            String authority = jwtUtil.getRole(token);
-            Role role=Role.valueOf(authority);
-
-            //userEntity를 생성하여 값 set
-            Member member = new Member();
-            member.setUsername(username);
-            member.setRole(role);
-
-            //UserDetails에 회원 정보 객체 담기
-            CustomMemberDetails customMemberDetails = new CustomMemberDetails(member);
-
-            //스프링 시큐리티 인증 토큰 생성
-            Authentication authToken = new UsernamePasswordAuthenticationToken(customMemberDetails, null, customMemberDetails.getAuthorities());
-
-            //세션에 사용자 등록
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-
-            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            // 액세스 토큰이 만료된 경우
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            PrintWriter writer = response.getWriter();
+            writer.print("access token expired");
+            return; // 제어 흐름 종료
         }
+
+
+        //토큰에서 username과 role 획득
+        String username = jwtUtil.getUsername(token);
+        String authority = jwtUtil.getRole(token);
+        Role role=Role.valueOf(authority);
+
+        //userEntity를 생성하여 값 set
+        Member member = new Member();
+        member.setUsername(username);
+        member.setRole(role);
+
+        //UserDetails에 회원 정보 객체 담기
+        CustomMemberDetails customMemberDetails = new CustomMemberDetails(member);
+
+        //스프링 시큐리티 인증 토큰 생성
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customMemberDetails, null, customMemberDetails.getAuthorities());
+
+        //세션에 사용자 등록
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        filterChain.doFilter(request, response);
     }
 }

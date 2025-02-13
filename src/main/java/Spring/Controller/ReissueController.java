@@ -62,8 +62,11 @@ public class ReissueController {
         String role = jwtUtil.getRole(refreshToken);
 
         // 새로운 JWT를 생성
-        String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
-        String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+        // 액세스 토큰 생성
+        String newAccess = jwtUtil.createJwt("access",username, role, 30 * 60 * 1000L); // 30분
+        // 리프레시 토큰 생성
+        String newRefresh = jwtUtil.createJwt("refresh",username, role, 7 * 24 * 60 * 60 * 1000L); // 1주일
+
 
         // 응답
         Map<String, String> responseBody = new LinkedHashMap<>();
