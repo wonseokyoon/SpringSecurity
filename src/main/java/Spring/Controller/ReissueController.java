@@ -35,16 +35,15 @@ public class ReissueController {
         //refresh 토큰
         String refresh = null;
         Cookie[] cookies = request.getCookies();
+
+        // 토큰이 null
+        if(cookies == null) throw new BaseException(ErrorCode.REFRESH_TOKEN_NULL);
+
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("refresh")) {
                 refresh = cookie.getValue();
                 break;
             }
-        }
-
-        if (refresh == null) {
-            //response status code
-            throw new BaseException(ErrorCode.REFRESH_TOKEN_NULL);
         }
 
         //만료 체크
